@@ -1,27 +1,32 @@
-import random
+"""import random
 import sys
 sys.path.append("")
 json_out = []
 CHARACTER_LIMIT = 32000
 import numpy as np
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-import torch
+import torch"""
 from huggingface_hub import login
 login("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")
 
-# Load the LLaMA 3.2 model (authenticated with Hugging Face and have access to the model?)
-model_name = "Doctor-Shotgun/TinyLlama-1.1B-32k-Instruct"
-#task: quantizing the model and making sure its using fewer resources + add
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
+# ✅ Load model and tokenizer
+model_id = "meta-llama/Llama-3.2-3B-Instruct"
+quant_config = BitsAndBytesConfig(
     load_in_4bit=True,
-    device_map="auto",
     bnb_4bit_use_double_quant=True,
     bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_compute_dtype=torch.float16
 )
 
+tokenizer = AutoTokenizer.from_pretrained(model_id,  trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    quantization_config=quant_config,
+    device_map="auto"
+)
+
+
+scorer_llama = scorer.IncrementalLMScorer(model = model, tokenizer = tokenizer)
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 def get_model_response(prompt):
@@ -133,7 +138,7 @@ def generate_unambiguous(message):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    trials = ["simple"] * 12 + ["complex"] * 12 + ["ambiguous"] * 9 + ["unambiguous"] * 33
+    trials = ["unambiguous"] * 50
     target_count = 0
     competitor_count = 0
     distractor_count = 0
@@ -162,7 +167,7 @@ if __name__ == '__main__':
         random.shuffle(pictures)
 
         # fill the parameters to the trial outputs
-        trial_instuction = instructions_trial.format(
+        trial_instruction = instructions_trial.format(
             message=message,
             letter_1=obj_1,
             letter_2=obj_2,
@@ -172,16 +177,15 @@ if __name__ == '__main__':
             image_3=pictures[2],
         )
 
-        response_key = get_model_response(trial_instuction)
-        print(response_key)
-        if response_key == obj_1:
-            response = pictures[0]
-        elif response_key == obj_2:
-            response = pictures[1]
-        elif response_key == obj_3:
-            response = pictures[2]
-        else:
-            response = ""
+        prefixes = [trial_instruction] * 6
+        queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
+        logs_probs = scorer_llama.conditional_score(prefixes, queries)
+        print(trial_instruction)
+        new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
+        print(logs_probs)
+        print(new_logs)
+
+        response = pictures[new_logs.index(max(new_logs))]
 
         if response == target:
             target_count+=1
@@ -190,3 +194,9 @@ if __name__ == '__main__':
         elif response == distractor:
             distractor_count+=1
         suma+=1
+    print("RESULTS:")
+    print(f"Target: {target_count}")
+    print(f"Competitor: {competitor_count}")
+    print(f"Distractor: {distractor_count}")
+    print(f"Total trials: {suma}")
+    
