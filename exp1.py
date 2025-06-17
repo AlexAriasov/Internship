@@ -22,8 +22,9 @@ tokenizer = AutoTokenizer.from_pretrained(model_id,  trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
     quantization_config=quant_config,
-    device_map="auto"
-)
+    device_map=None,  # instead of "auto"
+    torch_dtype=torch.float16
+).to("cuda")
 
 
 scorer_llama = scorer.IncrementalLMScorer(model = model, tokenizer = tokenizer)
