@@ -1,30 +1,23 @@
 import random
 import sys
 sys.path.append("")
-json_out = []
-CHARACTER_LIMIT = 32000
 import numpy as np
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
+import torch.nn.functional as F
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from huggingface_hub import login
-login("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")
-from minicons import scorer
-# ✅ Load model and tokenizer
-model_id = "meta-llama/Llama-3.2-3B-Instruct"
 
-tokenizer = AutoTokenizer.from_pretrained(model_id,  trust_remote_code=True)
+# Login to Hugging Face
+login("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")
+
+# Load model and tokenizer
+model_id = "meta-llama/Llama-3.2-3B-Instruct"
+tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
     torch_dtype=torch.float16
 ).to("cuda")
 
-orig_forward = model.forward
-def cuda_forward(*args, **kwargs):
-    kwargs = {k: v.to("cuda") if isinstance(v, torch.Tensor) else v for k, v in kwargs.items()}
-    return orig_forward(*args, **kwargs)
-model.forward = cuda_forward
-
-scorer_llama = scorer.IncrementalLMScorer(model = model, tokenizer = tokenizer)
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 def get_model_response(prompt):
@@ -35,7 +28,24 @@ def randomized_choice_options(num_choices):
     choice_options = list(map(chr, range(65, 91)))
     return np.random.choice(choice_options, num_choices, replace=False)
 
+def compute_logprobs(prefixes, queries, model, tokenizer):
+    logprobs = []
+    for prefix, query in zip(prefixes, queries):
+        full_input = prefix + query
+        inputs = tokenizer(full_input, return_tensors="pt").to("cuda")
+        input_ids = inputs.input_ids
 
+        with torch.no_grad():
+            outputs = model(**inputs)
+            logits = outputs.logits
+
+        prefix_ids = tokenizer(prefix, return_tensors="pt").input_ids.to("cuda")
+        query_ids = input_ids[0][len(prefix_ids[0]):]
+
+        log_probs = F.log_softmax(logits[0][:-1], dim=-1)
+        selected = log_probs[range(len(query_ids)), query_ids]
+        logprobs.append(selected.sum().item())
+    return logprobs
 
 ###Experiment1
 
@@ -178,7 +188,7 @@ if __name__ == '__main__':
         prefixes = [trial_instruction] * 6
         queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
 
-        logs_probs = scorer_llama.conditional_score(prefixes, queries)
+        logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
         print(trial_instruction)
         new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
         print(logs_probs)
