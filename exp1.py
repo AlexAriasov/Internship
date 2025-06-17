@@ -20,6 +20,7 @@ model = AutoModelForCausalLM.from_pretrained(
 
 
 scorer_llama = scorer.IncrementalLMScorer(model = model, tokenizer = tokenizer)
+scorer_llama.device = torch.device("cuda")
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 def get_model_response(prompt):
@@ -172,7 +173,6 @@ if __name__ == '__main__':
 
         prefixes = [trial_instruction] * 6
         queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
-        scorer_llama.model.to("cuda")
 
         logs_probs = scorer_llama.conditional_score(prefixes, queries)
         print(trial_instruction)
