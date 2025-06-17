@@ -4,25 +4,17 @@ sys.path.append("")
 json_out = []
 CHARACTER_LIMIT = 32000
 import numpy as np
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
 from huggingface_hub import login
 login("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")
 from minicons import scorer
 # ✅ Load model and tokenizer
 model_id = "meta-llama/Llama-3.2-3B-Instruct"
-quant_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_use_double_quant=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16
-)
 
 tokenizer = AutoTokenizer.from_pretrained(model_id,  trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    quantization_config=quant_config,
-    device_map=None,  # instead of "auto"
     torch_dtype=torch.float16
 ).to("cuda")
 
