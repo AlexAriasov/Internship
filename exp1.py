@@ -1,14 +1,14 @@
-"""import random
+import random
 import sys
 sys.path.append("")
 json_out = []
 CHARACTER_LIMIT = 32000
 import numpy as np
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-import torch"""
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, pipeline
+import torch
 from huggingface_hub import login
 login("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")
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from minicons import scorer
 # ✅ Load model and tokenizer
 model_id = "meta-llama/Llama-3.2-3B-Instruct"
 quant_config = BitsAndBytesConfig(
