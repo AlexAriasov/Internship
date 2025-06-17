@@ -8,7 +8,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch"""
 from huggingface_hub import login
 login("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")
-
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 # ✅ Load model and tokenizer
 model_id = "meta-llama/Llama-3.2-3B-Instruct"
 quant_config = BitsAndBytesConfig(
@@ -199,4 +199,3 @@ if __name__ == '__main__':
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
     print(f"Total trials: {suma}")
-    
