@@ -1,9 +1,44 @@
 import random
 import sys
 sys.path.append("")
-json_out = []
-CHARACTER_LIMIT = 32000
 import numpy as np
+import torch
+import torch.nn.functional as F
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from huggingface_hub import login
+
+# Login to Hugging Face
+login("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")
+
+# Load model and tokenizer
+model_id = "meta-llama/Llama-3.2-3B-Instruct"
+tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    torch_dtype=torch.float16
+).to("cuda")
+
+generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
+
+def compute_logprobs(prefixes, queries, model, tokenizer):
+    logprobs = []
+    for prefix, query in zip(prefixes, queries):
+        full_input = prefix + query
+        inputs = tokenizer(full_input, return_tensors="pt").to("cuda")
+        input_ids = inputs.input_ids
+
+        with torch.no_grad():
+            outputs = model(**inputs)
+            logits = outputs.logits
+
+        prefix_ids = tokenizer(prefix, return_tensors="pt").input_ids.to("cuda")
+        query_ids = input_ids[0][len(prefix_ids[0]):]
+
+        log_probs = F.log_softmax(logits[0][:-1], dim=-1)
+        selected = log_probs[range(len(query_ids)), query_ids]
+        logprobs.append(selected.sum().item())
+    return logprobs
+
 
 def randomized_choice_options(num_choices):
     choice_options = list(map(chr, range(65, 91)))
@@ -118,7 +153,7 @@ def generate_unambiguous(target):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    trials = ["simple"]*12 + ["complex"]*12 + ["ambiguous"]*15 + ["unambiguous"]*27
+    trials = ["unambiguous"]*50
     target_count = 0
     competitor_count = 0
     distractor_count = 0
@@ -166,17 +201,16 @@ if __name__ == '__main__':
             message_4=messages[3]
         )
 
-        response_key = ""
-        if response_key == obj_1:
-            response = messages[0]
-        elif response_key == obj_2:
-            response = messages[1]
-        elif response_key == obj_3:
-            response = messages[2]
-        elif response_key == obj_4:
-            response = messages[3]
-        else:
-            response = ""
+        prefixes = [trial_instruction] * 8
+        queries = [obj_1, obj_2, obj_3, obj_4, messages[0], messages[1], messages[2], messages[3]]
+
+        logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
+        print(trial_instruction)
+        new_logs = [logs_probs[0] + logs_probs[4], logs_probs[1] + logs_probs[5], logs_probs[2] + logs_probs[6], logs_probs[3] + logs_probs[7]]
+        print(logs_probs)
+        print(new_logs)
+
+        response = messages[new_logs.index(max(new_logs))]
 
         if response == message:
             target_count+=1
@@ -185,3 +219,8 @@ if __name__ == '__main__':
         elif response in distractors:
             distractor_count+=1
         suma+=1
+    print("RESULTS:")
+    print(f"Target: {target_count}")
+    print(f"Competitor: {competitor_count}")
+    print(f"Distractor: {distractor_count}")
+    print(f"Total trials: {suma}")
