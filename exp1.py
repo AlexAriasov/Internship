@@ -22,7 +22,7 @@ model = AutoModelForCausalLM.from_pretrained(
     torch_dtype=torch.float16
 ).to("cuda")
 
-generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
+generator = pipeline("text-generation", model=model, tokenizer=tokenizer, device=0)
 
 def get_model_response(prompt):
     output = generator(prompt, max_new_tokens=20, do_sample=True)[0]['generated_text']
@@ -39,6 +39,7 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
         full_input = prefix + query
         inputs = tokenizer(full_input, return_tensors="pt").to("cuda")
         input_ids = inputs.input_ids
+        print(input_ids)
 
         with torch.no_grad():
             outputs = model(**inputs)
@@ -220,7 +221,7 @@ if __name__ == '__main__':
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
     print(f"Total trials: {suma}")"""
-    prefixes = ["The capital of France is:"] * 3
+    prefixes = ["The capital of France is: "] * 3
     queries = ["Berlin", "Paris", "London"]
     random.shuffle(queries)
     logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
