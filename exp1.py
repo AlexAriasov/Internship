@@ -50,12 +50,12 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
         print(query_ids)
 
 
-        log_probs = F.log_softmax(logits[0][:-1], dim=-1)
+        log_probs = F.log_softmax(logits[0], dim=-1)
         print(log_probs)
         selected = []
-        for i in range(len(query_ids)):
-            token_id = query_ids[i]
-            logprob = log_probs[i, token_id]
+        start = len(prefix_ids[0]) - 1
+        for i, token_id in enumerate(query_ids):
+            logprob = log_probs[start + i, token_id]
             selected.append(logprob)
         selected = torch.tensor(selected)
         print(selected)
