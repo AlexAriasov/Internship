@@ -37,8 +37,9 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
     logprobs = []
     for prefix, query in zip(prefixes, queries):
         full_input = prefix + query
+        print(full_input)
         inputs = tokenizer(full_input, return_tensors="pt").to("cuda")
-        print(inputs.text)
+        print(inputs)
         input_ids = inputs.input_ids
 
         with torch.no_grad():
