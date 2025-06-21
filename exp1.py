@@ -28,6 +28,9 @@ def randomized_choice_options(num_choices):
     choice_options = list(map(chr, range(65, 91)))
     return np.random.choice(choice_options, num_choices, replace=False)
 
+def few_shots():
+
+
 def compute_logprobs(prefixes, queries, model, tokenizer):
     logprobs = []
     for prefix, query in zip(prefixes, queries):
@@ -44,7 +47,8 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
 
         log_probs = F.log_softmax(logits[0][:-1], dim=-1)
         selected = log_probs[range(len(query_ids)), query_ids]
-        logprobs.append(selected.sum().item())
+        print(selected)
+        logprobs.append(selected.mean().item())
     return logprobs
 
 ###Experiment1
@@ -151,7 +155,7 @@ if __name__ == '__main__':
     competitor_count = 0
     distractor_count = 0
     suma = 0
-    for trial in trials:
+    """for trial in trials:
         message = random.choice(messages)
         if trial == "simple":
             target, competitor, distractor = generate_simple(message)
@@ -207,4 +211,10 @@ if __name__ == '__main__':
     print(f"Target: {target_count}")
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
-    print(f"Total trials: {suma}")
+    print(f"Total trials: {suma}")"""
+    prefixes = ["The capital of France is:"]*3
+    queries = ["Berlin", "Paris", "London"]
+    random.shuffle(queries)
+    logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
+    print(queries)
+    print(logs_probs)
