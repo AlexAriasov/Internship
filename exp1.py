@@ -54,6 +54,7 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
         for i, token_id in enumerate(query_ids):
             logprob = log_probs[start + i, token_id]
             selected.append(logprob)
+        selected = torch.tensor(selected)
         print(selected)
         logprobs.append(selected.mean().item())
     return logprobs
