@@ -8,7 +8,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from huggingface_hub import login
 
 # Login to Hugging Face
-login("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")
+login("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")
 
 # Load model and tokenizer
 model_id = "meta-llama/Llama-3.2-3B-Instruct"
