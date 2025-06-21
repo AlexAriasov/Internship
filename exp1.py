@@ -47,14 +47,14 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
         prefix_ids = tokenizer(prefix, return_tensors="pt").input_ids.to("cuda")
         query_ids = input_ids[0][len(prefix_ids[0]):]
 
+        log_probs = F.log_softmax(logits[0][:-1], dim=-1)
+        start = len(prefix_ids[0]) - 1  # offset for logits predicting next token
 
-        log_probs = F.log_softmax(logits[0], dim=-1)
         selected = []
-        start = len(prefix_ids[0]) - 1
         for i, token_id in enumerate(query_ids):
             logprob = log_probs[start + i, token_id]
             selected.append(logprob)
-        selected = torch.tensor(selected)
+        print(selected)
         logprobs.append(selected.mean().item())
     return logprobs
 
@@ -219,7 +219,7 @@ if __name__ == '__main__':
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
     print(f"Total trials: {suma}")"""
-    prefixes = ["The capital of France is: "] * 3
+    prefixes = ["The capital of France is:"] * 3
     queries = ["Berlin", "Paris", "London"]
     random.shuffle(queries)
     logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
