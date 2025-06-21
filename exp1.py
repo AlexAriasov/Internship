@@ -11,6 +11,7 @@ from huggingface_hub import login
 
 load_dotenv()  # Load variables from .env
 token = os.getenv("HF_TOKEN")  # Read token from environment
+print(f"Token is: {token}")
 login(token, add_to_git_credential=True)
 
 # Load model and tokenizer
@@ -47,7 +48,12 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
         query_ids = input_ids[0][len(prefix_ids[0]):]
 
         log_probs = F.log_softmax(logits[0][:-1], dim=-1)
-        selected = log_probs[range(len(query_ids)), query_ids]
+        selected = []
+        for i in range(len(query_ids)):
+            token_id = query_ids[i]
+            logprob = log_probs[i, token_id]
+            selected.append(logprob)
+        selected = torch.tensor(selected)
         print(selected)
         logprobs.append(selected.mean().item())
     return logprobs
