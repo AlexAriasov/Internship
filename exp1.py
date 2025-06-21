@@ -5,10 +5,13 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+import os
+from dotenv import load_dotenv
 from huggingface_hub import login
 
-# Login to Hugging Face
-login("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")
+load_dotenv()  # Load variables from .env
+token = os.getenv("HF_TOKEN")  # Read token from environment
+login(token, add_to_git_credential=True)
 
 # Load model and tokenizer
 model_id = "meta-llama/Llama-3.2-3B-Instruct"
@@ -210,7 +213,7 @@ if __name__ == '__main__':
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
     print(f"Total trials: {suma}")"""
-    prefixes = ["The capital of France is:"]*3
+    prefixes = ["The capital of France is:"] * 3
     queries = ["Berlin", "Paris", "London"]
     random.shuffle(queries)
     logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
