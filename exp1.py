@@ -37,9 +37,7 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
     logprobs = []
     for prefix, query in zip(prefixes, queries):
         full_input = prefix + query
-        print(full_input)
         inputs = tokenizer(full_input, return_tensors="pt").to("cuda")
-        print(tokenizer.convert_ids_to_tokens(inputs["input_ids"][0]))
         input_ids = inputs.input_ids
 
         with torch.no_grad():
@@ -50,7 +48,7 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
         query_ids = input_ids[0][len(prefix_ids[0]):]
 
 
-        log_probs = F.log_softmax(logits[0][:-1], dim=-1)
+        log_probs = F.log_softmax(logits[0], dim=-1)
         selected = []
         start = len(prefix_ids[0]) - 1
         for i, token_id in enumerate(query_ids):
