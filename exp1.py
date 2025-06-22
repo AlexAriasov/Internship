@@ -8,6 +8,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import os
 from dotenv import load_dotenv
 from huggingface_hub import login
+from minicons import scorer
 
 load_dotenv()  # Load variables from .env
 token = os.getenv("HF_TOKEN")  # Read token from environment
@@ -21,6 +22,7 @@ model = AutoModelForCausalLM.from_pretrained(
     model_id,
     torch_dtype=torch.float16
 ).to("cuda")
+scorer = scorer.IncrementalLMScorer(model, tokenizer=tokenizer, device='cuda')
 
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
@@ -200,13 +202,13 @@ if __name__ == '__main__':
         prefixes = [trial_instruction] * 6
         queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
 
-        logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
+        logs_probs = scorer.conditional_score(prefixes, queries)
         print(trial_instruction)
-        new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
+        #new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
         print(logs_probs)
-        print(new_logs)
+        #print(new_logs)
 
-        response = pictures[new_logs.index(max(new_logs))]
+        response = pictures[logs_probs.index(max(logs_probs))]
 
         if response == target:
             target_count+=1
