@@ -222,7 +222,7 @@ if __name__ == '__main__':
 
     print(f"Total trials: {suma}")
     """
-    prefixes = ["The capital of France is: "] * 3
+    prefixes = ["The capital of France is:"] * 3
     queries = ["Berlin", "Paris", "London"]
     random.shuffle(queries)
     logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
