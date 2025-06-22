@@ -16,7 +16,7 @@ print(f"Token is: {token}")
 login(token, add_to_git_credential=True)
 
 # Load model and tokenizer
-model_id = "meta-llama/Llama-3.2-3B-Instruct"
+model_id = "meta-llama/Llama-3.1-8B-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
