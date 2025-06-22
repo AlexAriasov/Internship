@@ -167,7 +167,7 @@ if __name__ == '__main__':
     competitor_count = 0
     distractor_count = 0
     suma = 0
-    """for trial in trials:
+    for trial in trials:
         message = random.choice(messages)
         if trial == "simple":
             target, competitor, distractor = generate_simple(message)
@@ -231,4 +231,4 @@ if __name__ == '__main__':
     random.shuffle(queries)
     logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
     print(queries)
-    print(logs_probs)
+    print(logs_probs)"""
