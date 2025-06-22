@@ -133,13 +133,13 @@ def generate_ambiguous(message):
     if message in set_1:
         target_obj = random.choice(list(set_2.difference({"scarf"})))
         target = message + " with a " + target_obj
-        competitor = message + " with a " + target_obj
+        competitor = target
         distractor_obj = set_1.difference({"robot", message}).pop()
         distractor = distractor_obj + " with a " + random.choice(list(set_2.difference({target_obj})))
     else:
         target_obj = random.choice(list(set_1.difference({"robot"})))
         target = target_obj + " with a " + message
-        competitor = target_obj + " with a " + message
+        competitor = target
         distractor_obj = set_2.difference({"scarf", message}).pop()
         distractor = random.choice(list(set_1.difference({target_obj}))) + " with a " + distractor_obj
     return target, competitor, distractor
@@ -208,14 +208,14 @@ if __name__ == '__main__':
         print(logs_probs)
         print(new_logs)
 
-        response_ind = new_logs.index(max(new_logs))
+        response = pictures[new_logs.index(max(new_logs))]
 
-        if response_ind == pictures.index(target):
-            target_count += 1
-        elif response_ind == pictures.index(competitor):
-            competitor_count += 1
-        elif response_ind == pictures.index(distractor):
-            distractor_count += 1
+        if response == target:
+            target_count+=1
+        elif response == competitor:
+            competitor_count+=1
+        elif response == distractor:
+            distractor_count+=1
         suma+=1
     print("RESULTS:")
     print(f"Target: {target_count}")
