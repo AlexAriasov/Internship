@@ -34,6 +34,45 @@ def randomized_choice_options(num_choices):
     choice_options = list(map(chr, range(65, 91)))
     return np.random.choice(choice_options, num_choices, replace=False)
 
+def few_shots:
+    prompt=task_instructions + "Firstly, you will see 4 example trials:\n\n"
+    trials = ["complex", "simple", "ambiguous", "unambiguous"]
+    random.shuffle(trials)
+    for trial in trials:
+        message = random.choice(messages)
+        if trial == "simple":
+            target, competitor, distractor = generate_simple(message)
+        elif trial == "complex":
+            target, competitor, distractor = generate_complex(message)
+        elif trial == "ambiguous":
+            target, competitor, distractor = generate_ambiguous(message)
+        else:
+            target, competitor, distractor = generate_unambiguous(message)
+
+        # generate by-participant randomization of keys that correspond to the forced-choice options
+        (
+            obj_1,
+            obj_2,
+            obj_3
+        ) = randomized_choice_options(3)
+        obj_list = [obj_1, obj_2, obj_3]
+
+        # create a list of images and randomly shuffle it
+        pictures = [target, distractor, competitor]
+        random.shuffle(pictures)
+
+        # fill the parameters to the trial outputs
+        trial_instruction = instructions_trial.format(
+            message=message,
+            letter_1=obj_1,
+            letter_2=obj_2,
+            letter_3=obj_3,
+            image_1=pictures[0],
+            image_2=pictures[1],
+            image_3=pictures[2],
+        )
+        prompt+=trial_instruction + obj_list[pictures.index(target)] +"\n\n"
+    return prompt
 
 def compute_logprobs(prefixes, queries, model, tokenizer):
     logprobs = []
@@ -84,7 +123,7 @@ instructions_trial = (
     "\"green monster\"\n"
     "\"red hat\"\n"
     "\"blue hat\"\n"
-    "Your answer: \n"
+    "Your answer: "
 )
 
 # possible messages and two feature dimensions
@@ -160,8 +199,8 @@ def generate_unambiguous(message):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    """
     trials = ["complex"] * 50
+    prompt = few_shots()
     target_count = 0
     competitor_count = 0
     distractor_count = 0
@@ -200,11 +239,11 @@ if __name__ == '__main__':
             image_3=pictures[2],
         )
 
-        prefixes = [trial_instruction] * 6
+        prefixes = [prompt+trial_instruction] * 6
         queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
 
         logs_probs = scorer.conditional_score(prefixes, queries)
-        print(trial_instruction)
+        print(prompt+trial_instruction)
         new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
         print(logs_probs)
         print(new_logs)
@@ -222,7 +261,8 @@ if __name__ == '__main__':
     print(f"Target: {target_count}")
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
-    print(f"Total trials: {suma}")"""
+    print(f"Total trials: {suma}")
+    """
     for i in range(50):
         prefixes = ["The capital of France is:"] * 3
         queries = ["Paris", "Berlin", "London"]
@@ -230,5 +270,6 @@ if __name__ == '__main__':
         print(queries)
         logs = scorer.conditional_score(prefixes, queries)
         print(logs)
+    """
 
 
