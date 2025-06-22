@@ -200,7 +200,6 @@ def generate_unambiguous(message):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     trials = ["complex"] * 50
-    prompt = few_shots()
     target_count = 0
     competitor_count = 0
     distractor_count = 0
@@ -239,11 +238,11 @@ if __name__ == '__main__':
             image_3=pictures[2],
         )
 
-        prefixes = [prompt+trial_instruction] * 6
+        prefixes = [trial_instruction] * 6
         queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
 
         logs_probs = scorer.conditional_score(prefixes, queries)
-        print(prompt+trial_instruction)
+        print(trial_instruction)
         new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
         print(logs_probs)
         print(new_logs)
