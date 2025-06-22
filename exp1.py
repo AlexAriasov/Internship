@@ -204,11 +204,11 @@ if __name__ == '__main__':
 
         logs_probs = scorer.conditional_score(prefixes, queries)
         print(trial_instruction)
-        #new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
+        new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
         print(logs_probs)
-        #print(new_logs)
+        print(new_logs)
 
-        response = pictures[logs_probs.index(max(logs_probs))]
+        response = pictures[new_logs.index(max(new_logs))]
 
         if response == target:
             target_count+=1
