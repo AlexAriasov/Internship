@@ -219,8 +219,10 @@ if __name__ == '__main__':
     print(f"Target: {target_count}")
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
-    print(f"Total trials: {suma}")"""
-    prefixes = ["The capital of France is:"] * 3
+
+    print(f"Total trials: {suma}")
+    """
+    prefixes = ["The capital of France is: "] * 3
     queries = ["Berlin", "Paris", "London"]
     random.shuffle(queries)
     logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
