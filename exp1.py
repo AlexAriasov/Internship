@@ -34,7 +34,7 @@ def randomized_choice_options(num_choices):
     choice_options = list(map(chr, range(65, 91)))
     return np.random.choice(choice_options, num_choices, replace=False)
 
-def few_shots:
+def few_shots():
     prompt=task_instructions + "Firstly, you will see 4 example trials:\n\n"
     trials = ["complex", "simple", "ambiguous", "unambiguous"]
     random.shuffle(trials)
