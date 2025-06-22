@@ -133,13 +133,13 @@ def generate_ambiguous(message):
     if message in set_1:
         target_obj = random.choice(list(set_2.difference({"scarf"})))
         target = message + " with a " + target_obj
-        competitor = target
+        competitor = message + " with a " + target_obj
         distractor_obj = set_1.difference({"robot", message}).pop()
         distractor = distractor_obj + " with a " + random.choice(list(set_2.difference({target_obj})))
     else:
         target_obj = random.choice(list(set_1.difference({"robot"})))
         target = target_obj + " with a " + message
-        competitor = target
+        competitor = target_obj + " with a " + message
         distractor_obj = set_2.difference({"scarf", message}).pop()
         distractor = random.choice(list(set_1.difference({target_obj}))) + " with a " + distractor_obj
     return target, competitor, distractor
