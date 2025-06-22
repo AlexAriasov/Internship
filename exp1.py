@@ -160,6 +160,7 @@ def generate_unambiguous(message):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    """
     trials = ["complex"] * 50
     target_count = 0
     competitor_count = 0
@@ -221,6 +222,13 @@ if __name__ == '__main__':
     print(f"Target: {target_count}")
     print(f"Competitor: {competitor_count}")
     print(f"Distractor: {distractor_count}")
+    print(f"Total trials: {suma}")"""
+    for i in range(50):
+        prefixes = ["The capital of France is:"] * 3
+        queries = ["Paris", "Berlin", "London"]
+        random.shuffle(queries)
+        print(queries)
+        logs = scorer.conditional_score(prefixes, queries)
+        print(logs)
 
-    print(f"Total trials: {suma}")
 
