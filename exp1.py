@@ -84,7 +84,7 @@ instructions_trial = (
     "\"green monster\"\n"
     "\"red hat\"\n"
     "\"blue hat\"\n"
-    "Your answer:\n"
+    "Your answer: \n"
 )
 
 # possible messages and two feature dimensions
@@ -160,7 +160,7 @@ def generate_unambiguous(message):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    trials = ["unambiguous"] * 50
+    trials = ["ambiguous"] * 50
     target_count = 0
     competitor_count = 0
     distractor_count = 0
