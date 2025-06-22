@@ -56,7 +56,7 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
             selected.append(logprob)
         selected = torch.tensor(selected)
         print(selected)
-        logprobs.append(selected.sum().item())
+        logprobs.append(selected.mean().item())
     return logprobs
 
 ###Experiment1
