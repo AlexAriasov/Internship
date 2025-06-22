@@ -84,7 +84,7 @@ instructions_trial = (
     "\"green monster\"\n"
     "\"red hat\"\n"
     "\"blue hat\"\n"
-    "Your answer: \n"
+    "Your answer:\n"
 )
 
 # possible messages and two feature dimensions
@@ -223,10 +223,4 @@ if __name__ == '__main__':
     print(f"Distractor: {distractor_count}")
 
     print(f"Total trials: {suma}")
-    """
-    prefixes = ["The capital of France is: "] * 3
-    queries = ["Berlin", "Paris", "London"]
-    random.shuffle(queries)
-    logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
-    print(queries)
-    print(logs_probs)"""
+    
