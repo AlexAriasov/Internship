@@ -208,14 +208,14 @@ if __name__ == '__main__':
         print(logs_probs)
         print(new_logs)
 
-        response = pictures[new_logs.index(max(new_logs))]
+        response_ind = new_logs.index(max(new_logs))
 
-        if response == target:
-            target_count+=1
-        elif response == competitor:
-            competitor_count+=1
-        elif response == distractor:
-            distractor_count+=1
+        if response_ind == pictures.index(target):
+            target_count += 1
+        elif response_ind == pictures.index(competitor):
+            competitor_count += 1
+        elif response_ind == pictures.index(distractor):
+            distractor_count += 1
         suma+=1
     print("RESULTS:")
     print(f"Target: {target_count}")
