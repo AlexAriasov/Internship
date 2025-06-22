@@ -202,7 +202,7 @@ if __name__ == '__main__':
         prefixes = [trial_instruction] * 6
         queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
 
-        logs_probs = scorer.conidtional_score(prefixes, queries)
+        logs_probs = scorer.conditional_score(prefixes, queries)
         print(trial_instruction)
         new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
         print(logs_probs)
