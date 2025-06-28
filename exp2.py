@@ -160,7 +160,7 @@ def generate_unambiguous(target):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    trials = ["unambiguous"]*50
+    trials = ["ambiguous"]*50
     target_count = 0
     competitor_count = 0
     distractor_count = 0
@@ -226,7 +226,7 @@ if __name__ == '__main__':
         elif response in distractors:
             distractor_count+=1
         suma+=1
-        
+
     print("RESULTS:")
     print(f"Target: {target_count}")
     print(f"Competitor: {competitor_count}")
