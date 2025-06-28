@@ -5,9 +5,15 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+import os
+from dotenv import load_dotenv
 from huggingface_hub import login
+from minicons import scorer
 
-
+load_dotenv()  # Load variables from .env
+token = os.getenv("HF_TOKEN")  # Read token from environment
+print(f"Token is: {token}")
+login(token, add_to_git_credential=True)
 
 # Load model and tokenizer
 model_id = "meta-llama/Llama-3.2-3B-Instruct"
@@ -16,6 +22,8 @@ model = AutoModelForCausalLM.from_pretrained(
     model_id,
     torch_dtype=torch.float16
 ).to("cuda")
+
+scorer = scorer.IncrementalLMScorer(model, tokenizer=tokenizer, device='cuda')
 
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
@@ -203,7 +211,7 @@ if __name__ == '__main__':
         prefixes = [trial_instruction] * 8
         queries = [obj_1, obj_2, obj_3, obj_4, messages[0], messages[1], messages[2], messages[3]]
 
-        logs_probs = compute_logprobs(prefixes, queries, model, tokenizer)
+        logs_probs = scorer.conditional_score(prefixes, queries)
         print(trial_instruction)
         new_logs = [logs_probs[0] + logs_probs[4], logs_probs[1] + logs_probs[5], logs_probs[2] + logs_probs[6], logs_probs[3] + logs_probs[7]]
         print(logs_probs)
@@ -218,6 +226,7 @@ if __name__ == '__main__':
         elif response in distractors:
             distractor_count+=1
         suma+=1
+        
     print("RESULTS:")
     print(f"Target: {target_count}")
     print(f"Competitor: {competitor_count}")
