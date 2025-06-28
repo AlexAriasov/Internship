@@ -46,6 +46,55 @@ def compute_logprobs(prefixes, queries, model, tokenizer):
         logprobs.append(selected.sum().item())
     return logprobs
 
+def few_shots():
+    prompt=task_instructions + "Firstly, you will see 4 example trials:\n\n"
+    trials = ["complex", "simple", "ambiguous", "unambiguous"]
+    random.shuffle(trials)
+    for trial in trials:
+        message = random.choice(messages)
+        if trial == "simple":
+            competitor, distractors, target_image, competitor_image, distractor_image = generate_simple(message)
+        elif trial == "complex":
+            competitor, distractors, target_image, competitor_image, distractor_image = generate_complex(message)
+        elif trial == "ambiguous":
+            competitor, distractors, target_image, competitor_image, distractor_image = generate_ambiguous(message)
+        else:
+            competitor, distractors, target_image, competitor_image, distractor_image = generate_unambiguous(message)
+
+        # create a list of creatures and shuffle it
+        creatures = [target_image, competitor_image, distractor_image]
+        random.shuffle(creatures)
+
+        # generate by-participant randomization of keys that correspond to the forced-choice options
+        (
+            obj_1,
+            obj_2,
+            obj_3,
+            obj_4
+        ) = randomized_choice_options(4)
+        obj_list = [obj_1, obj_2, obj_3, obj_4]
+
+        # shuffle the messages
+        random.shuffle(messages)
+
+        # fill the parameters to the trial outputs
+        trial_instruction = instructions_trial.format(
+            creature_1=creatures[0],
+            creature_2=creatures[1],
+            creature_3=creatures[2],
+            creature=target_image,
+            letter_1=obj_1,
+            letter_2=obj_2,
+            letter_3=obj_3,
+            letter_4=obj_4,
+            message_1=messages[0],
+            message_2=messages[1],
+            message_3=messages[2],
+            message_4=messages[3]
+        )
+        prompt+=trial_instruction + obj_list[messages.index(message)] +"\n\n"
+    return prompt
+
 
 def randomized_choice_options(num_choices):
     choice_options = list(map(chr, range(65, 91)))
@@ -77,7 +126,7 @@ instructions_trial = (
     "{letter_2}: {message_2}\n"
     "{letter_3}: {message_3}\n"
     "{letter_4}: {message_4}\n"
-    "Your answer: \n"
+    "Your answer: "
 )
 
 # possible messages and two feature dimensions
