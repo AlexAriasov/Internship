@@ -215,6 +215,7 @@ if __name__ == '__main__':
     distractor_count = 0
     suma = 0
     for trial in trials:
+        prompt = few_shots()
         message = random.choice(messages)
         if trial == "simple":
             competitor, distractors, target_image, competitor_image, distractor_image = generate_simple(message)
@@ -256,7 +257,6 @@ if __name__ == '__main__':
             message_3=messages[2],
             message_4=messages[3]
         )
-        prompt = few_shots()
         prefixes = [prompt + trial_instruction] * 8
         queries = [obj_1, obj_2, obj_3, obj_4, messages[0], messages[1], messages[2], messages[3]]
 
