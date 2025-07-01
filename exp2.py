@@ -257,8 +257,8 @@ if __name__ == '__main__':
             message_4=messages[3]
         )
         prompt = few_shots()
-        prefixes = [prompt + trial_instruction] * 4
-        queries = [obj_1, obj_2, obj_3, obj_4]
+        prefixes = [prompt + trial_instruction] * 8
+        queries = [obj_1, obj_2, obj_3, obj_4, messages[0], messages[1], messages[2], messages[3]]
 
         logs_probs = scorer.conditional_score(prefixes, queries)
         print(prompt + trial_instruction)
