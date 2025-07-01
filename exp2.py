@@ -209,7 +209,7 @@ def generate_unambiguous(target):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    trials = ["simple"]*50
+    trials = ["complex"]*50
     target_count = 0
     competitor_count = 0
     distractor_count = 0
@@ -267,6 +267,8 @@ if __name__ == '__main__':
         print(new_logs)
 
         response = messages[logs_probs.index(max(logs_probs))]
+        print(response)
+        print(message)
 
         if response == message:
             target_count+=1
