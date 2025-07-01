@@ -199,7 +199,7 @@ def generate_unambiguous(message):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    trials = ["simple"] * 50
+    trials = ["complex"] * 50
     target_count = 0
     competitor_count = 0
     distractor_count = 0
@@ -248,6 +248,8 @@ if __name__ == '__main__':
         print(new_logs)
 
         response = pictures[new_logs.index(max(new_logs))]
+        print(response)
+        print(target)
 
         if response == target:
             target_count+=1
