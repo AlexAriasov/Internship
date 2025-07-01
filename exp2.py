@@ -262,9 +262,9 @@ if __name__ == '__main__':
 
         logs_probs = scorer.conditional_score(prefixes, queries)
         print(prompt + trial_instruction)
-        #new_logs = [logs_probs[0] + logs_probs[4], logs_probs[1] + logs_probs[5], logs_probs[2] + logs_probs[6], logs_probs[3] + logs_probs[7]]
+        new_logs = [logs_probs[0] + logs_probs[4], logs_probs[1] + logs_probs[5], logs_probs[2] + logs_probs[6], logs_probs[3] + logs_probs[7]]
         print(logs_probs)
-        #print(new_logs)
+        print(new_logs)
 
         response = messages[logs_probs.index(max(logs_probs))]
 
