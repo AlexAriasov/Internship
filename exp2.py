@@ -266,7 +266,7 @@ if __name__ == '__main__':
         print(logs_probs)
         print(new_logs)
 
-        response = messages[logs_probs.index(max(logs_probs))]
+        response = messages[new_logs.index(max(new_logs))]
         print(response)
         print(message)
 
