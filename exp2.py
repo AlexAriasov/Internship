@@ -20,8 +20,9 @@ model_id = "Qwen/Qwen2.5-32B-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    torch_dtype=torch.float16
-).to("cuda")
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
 
 scorer = scorer.IncrementalLMScorer(model, tokenizer=tokenizer, device='cuda')
 
