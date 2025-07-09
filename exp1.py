@@ -37,7 +37,7 @@ def randomized_choice_options(num_choices):
 
 def few_shots():
     prompt=task_instructions + "Firstly, you will see 4 example trials:\n\n"
-    trials = ["unambiguous"] * 4
+    trials = ["complex"] * 4
     random.shuffle(trials)
     for trial in trials:
         message = random.choice(messages)
@@ -206,6 +206,7 @@ if __name__ == '__main__':
     distractor_count = 0
     suma = 0
     for trial in trials:
+        prompt = few_shots()
         message = random.choice(messages)
         if trial == "simple":
             target, competitor, distractor = generate_simple(message)
@@ -239,11 +240,11 @@ if __name__ == '__main__':
             image_3=pictures[2],
         )
 
-        prefixes = [trial_instruction] * 6
+        prefixes = [prompt + trial_instruction] * 6
         queries = [obj_1, obj_2, obj_3, pictures[0], pictures[1], pictures[2]]
 
         logs_probs = scorer.conditional_score(prefixes, queries)
-        print(trial_instruction)
+        print(prompt + trial_instruction)
         new_logs = [logs_probs[0] + logs_probs[3], logs_probs[1] + logs_probs[4], logs_probs[2] + logs_probs[5]]
         print(logs_probs)
         print(new_logs)
