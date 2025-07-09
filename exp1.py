@@ -37,7 +37,7 @@ def randomized_choice_options(num_choices):
 
 def few_shots():
     prompt=task_instructions + "Firstly, you will see 4 example trials:\n\n"
-    trials = ["ambiguous"] * 4
+    trials = ["unambiguous"] * 4
     random.shuffle(trials)
     for trial in trials:
         message = random.choice(messages)
@@ -200,7 +200,7 @@ def generate_unambiguous(message):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    trials = ["ambiguous"] * 50
+    trials = ["unambiguous"] * 50
     target_count = 0
     competitor_count = 0
     distractor_count = 0
