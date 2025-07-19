@@ -21,9 +21,9 @@ tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
     torch_dtype=torch.float16,
-    device_map="auto"
+    device_map="cuda"
 )
-scorer = scorer.IncrementalLMScorer(model, tokenizer=tokenizer, device="auto")
+scorer = scorer.IncrementalLMScorer(model, tokenizer=tokenizer, device="cuda")
 
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
