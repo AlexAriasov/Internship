@@ -16,7 +16,7 @@ print(f"Token is: {token}")
 login(token, add_to_git_credential=True)
 
 # Load model and tokenizer
-model_id = "Qwen/Qwen2.5-32B-Instruct"
+model_id = "Qwen/Qwen2.5-14B-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
@@ -216,7 +216,6 @@ if __name__ == '__main__':
     distractor_count = 0
     suma = 0
     for trial in trials:
-        prompt = few_shots()
         message = random.choice(messages)
         if trial == "simple":
             competitor, distractors, target_image, competitor_image, distractor_image = generate_simple(message)
@@ -258,11 +257,11 @@ if __name__ == '__main__':
             message_3=messages[2],
             message_4=messages[3]
         )
-        prefixes = [prompt + trial_instruction] * 8
+        prefixes = [trial_instruction] * 8
         queries = [obj_1, obj_2, obj_3, obj_4, messages[0], messages[1], messages[2], messages[3]]
 
         logs_probs = scorer.conditional_score(prefixes, queries)
-        print(prompt + trial_instruction)
+        print(trial_instruction)
         new_logs = [logs_probs[0] + logs_probs[4], logs_probs[1] + logs_probs[5], logs_probs[2] + logs_probs[6], logs_probs[3] + logs_probs[7]]
         print(logs_probs)
         print(new_logs)
