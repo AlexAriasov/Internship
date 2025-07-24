@@ -16,7 +16,7 @@ print(f"Token is: {token}")
 login(token, add_to_git_credential=True)
 
 # Load model and tokenizer
-model_id = "Qwen/Qwen2.5-14B-Instruct"
+model_id = "allenai/OLMo-2-1124-13B-Instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
